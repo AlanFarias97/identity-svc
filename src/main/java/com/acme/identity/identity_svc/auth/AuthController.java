@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/auth")
@@ -50,11 +51,17 @@ public class AuthController {
     public ResponseEntity<JwtResponse> login(@RequestBody @Valid LoginRequest req) {
         var u = users.findByUsername(req.username())
                 .orElseThrow(() -> new RuntimeException("Bad credentials"));
-
         if (!encoder.matches(req.password(), u.getPassword()))
             throw new RuntimeException("Bad credentials");
 
-        var token = jwt.generate(u.getUsername());
+        var roles = u.getRoles().stream()
+                .map(r -> r.getName().startsWith("ROLE_") ? r.getName().substring(5) : r.getName())
+                .toList();
+
+        var claims = new HashMap<String,Object>();
+        claims.put("roles", roles); // <-- ej. ["BILLING_USER"]
+
+        var token = jwt.generate(u.getUsername(), claims);
         var expiresAt = Instant.now().plusSeconds(expSeconds).toEpochMilli();
         return ResponseEntity.ok(new JwtResponse(token, expiresAt));
     }
