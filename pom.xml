@@ -109,6 +109,19 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Resilience -->
+		<!-- Resilience4j circuit breaker para servicios "imperativos" -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+		</dependency>
+
+		<!-- Retries de Spring -->
+		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+		</dependency>
+
 		<!-- Tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
